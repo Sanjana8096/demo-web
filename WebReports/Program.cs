@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebReports.Data;
+using WebReports.Models;
+using WebReports.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,10 +11,17 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+builder.Services.AddScoped(typeof(AadService));
+builder.Services.AddScoped(typeof(PbiEmbedService));
+
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+//pbiembed
+builder.Services.Configure<AzureAd>(builder.Configuration.GetSection("AzureAd-PBI"))
+                   .Configure<PowerBI>(builder.Configuration.GetSection("PowerBI"));
 
 var app = builder.Build();
 
