@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WebReports.Data;
@@ -18,6 +19,10 @@ builder.Services.AddScoped(typeof(PbiEmbedService));
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(sharedOptions =>
+{
+}).AddAzureAD(options => builder.Configuration.Bind("AzureAd", options)).AddCookie();
 
 //pbiembed
 builder.Services.Configure<AzureAd>(builder.Configuration.GetSection("AzureAd-PBI"))
