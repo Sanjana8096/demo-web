@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using WebReports.Data;
 using WebReports.Models;
 using WebReports.Services;
+using WebReports.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 
