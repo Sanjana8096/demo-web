@@ -5,6 +5,9 @@ using WebReports.Data;
 using WebReports.Models;
 using WebReports.Services;
 using WebReports.Helpers;
+using WebReports.Interfaces;
+using WebReports.Repository;
+using Microsoft.Extensions.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,9 +15,13 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
+builder.Services.AddDbContext<BswebReportsContext>(options =>
+    options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddScoped(typeof(AadService));
 builder.Services.AddScoped(typeof(PbiEmbedService));
+builder.Services.AddScoped<IClientRepository, ClientRepository>();
+builder.Services.AddScoped<IClientService, ClientService>();
 
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
@@ -30,6 +37,13 @@ builder.Services.Configure<AzureAd>(builder.Configuration.GetSection("AzureAd-PB
                    .Configure<PowerBI>(builder.Configuration.GetSection("PowerBI"));
 
 var app = builder.Build();
+
+//// migrate any database changes on startup (includes initial db creation)
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dataContext = scope.ServiceProvider.GetRequiredService<BswebReportsContext>();
+//    dataContext.Database.Migrate();
+//}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

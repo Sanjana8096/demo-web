@@ -56,7 +56,26 @@ namespace WebReports.Helpers
             return String.Empty;
         }
 
-        
+        /// <summary>
+        /// Gets the domain part of the email
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public static string GetDomainFromEmail(string email)
+        {
+            if (!String.IsNullOrEmpty(email))
+            {
+                int index = email.IndexOf("@");
+                if (index > 0)
+                {
+                    return email.Substring(index+1);
+                }
+                return email;
+            }
+            return String.Empty;
+        }
+
+
         /// <summary>
         /// Gets the Camel case of the inpue text
         /// </summary>
@@ -89,60 +108,7 @@ namespace WebReports.Helpers
             return titleCase;
         }
 
-        /// <summary>
-        /// Encrypts given string to Base64Hash using SHA1 Hash Algoritham
-        /// </summary>
-        /// <param name="password"></param>
-        /// <returns></returns>
-        //public static string EncryptToSha1Hash(string password)
-        //{
-        //    byte[] bytes = Encoding.Unicode.GetBytes(password);
-        //    byte[] inArray = HashAlgorithm.Create("SHA1").ComputeHash(bytes);
-        //    return Convert.ToBase64String(inArray);
-        //}
-
-        /// <summary>
-        /// Membership error code to String.
-        /// </summary>
-        /// <param name="createStatus"></param>
-        /// <returns></returns>
-        //public static string ErrorCodeToString(MembershipCreateStatus createStatus)
-        //{
-        //    // See http://go.microsoft.com/fwlink/?LinkID=177550 for
-        //    // a full list of status codes.
-        //    switch (createStatus)
-        //    {
-        //        case MembershipCreateStatus.DuplicateUserName:
-        //            return "User name already exists. Please enter a different user name.";
-
-        //        case MembershipCreateStatus.DuplicateEmail:
-        //            return "A user name for that e-mail address already exists. Please enter a different e-mail address.";
-
-        //        case MembershipCreateStatus.InvalidPassword:
-        //            return "The password provided is invalid. Please enter a valid password value.";
-
-        //        case MembershipCreateStatus.InvalidEmail:
-        //            return "The e-mail address provided is invalid. Please check the value and try again.";
-
-        //        case MembershipCreateStatus.InvalidAnswer:
-        //            return "The password retrieval answer provided is invalid. Please check the value and try again.";
-
-        //        case MembershipCreateStatus.InvalidQuestion:
-        //            return "The password retrieval question provided is invalid. Please check the value and try again.";
-
-        //        case MembershipCreateStatus.InvalidUserName:
-        //            return "The user name provided is invalid. Please check the value and try again.";
-
-        //        case MembershipCreateStatus.ProviderError:
-        //            return "The authentication provider returned an error. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-
-        //        case MembershipCreateStatus.UserRejected:
-        //            return "The user creation request has been canceled. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-
-        //        default:
-        //            return "An unknown error occurred. Please verify your entry and try again. If the problem persists, please contact your system administrator.";
-        //    }
-        //}
+       
 
         #endregion
 
@@ -182,12 +148,7 @@ namespace WebReports.Helpers
         /// <summary>
         /// global constant representing DefaultAdminKey for web.config's appsettings section.
         /// </summary>
-        public const string DefaultAdminKey = "DefaultAdminAccount";
-
-        /// <summary>
-        /// global constant representing NotifyEmailKey for web.config's appsettings section.
-        /// </summary>
-        public const string NotifyEmailKey = "NotifyEmail";
+        public const string DefaultAdminKey = "DefaultAdminAccounts";
 
         #endregion
 
