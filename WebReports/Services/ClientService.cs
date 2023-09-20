@@ -54,8 +54,7 @@ namespace WebReports.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                throw;
-                //throw new ValidationException("Error occured while adding client.");
+                throw new ValidationException("Error occured while adding client.");
             }
         }
 
@@ -73,8 +72,7 @@ namespace WebReports.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                throw;
-                //throw new ValidationException("Error occured while editing client.");
+                throw new ValidationException("Error occured while editing client.");
             }
         }
 
@@ -91,8 +89,7 @@ namespace WebReports.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                throw;
-                //throw new ValidationException("Error occured while deleting client.");
+                throw new ValidationException("Error occured while deleting client.");
             }
         }
 
@@ -110,8 +107,7 @@ namespace WebReports.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                throw;
-                //throw new ValidationException("Error occured while fetching client by id.");
+                throw new ValidationException("Error occured while fetching client by id.");
             }
         }
 
@@ -128,8 +124,7 @@ namespace WebReports.Services
             catch (Exception ex)
             {
                 _logger.LogError(ex, ex.Message);
-                throw;
-                //throw new ValidationException("Error occured while fetching client list.");
+                throw new ValidationException("Error occured while fetching client list.");
             }
         }
 
@@ -137,6 +132,18 @@ namespace WebReports.Services
 
         #region Other Calls
 
+        public bool CheckClientExists(string name)
+        {
+            try
+            {
+                return _clientRepository.CheckClientExists(name);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw new ValidationException("Error occured while fetching client list.");
+            }
+        }
 
         #endregion
 

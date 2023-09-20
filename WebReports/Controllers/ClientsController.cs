@@ -9,6 +9,9 @@ using Microsoft.EntityFrameworkCore;
 using WebReports.Interfaces;
 using WebReports.Models;
 using WebReports.Services;
+using WebReports.Helpers;
+using System.Net.Mail;
+using System.Text;
 
 namespace WebReports.Controllers
 {
@@ -30,143 +33,221 @@ namespace WebReports.Controllers
 
         #endregion
 
+        #region Constructor
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="clientService"></param>
         public ClientsController(ILogger<ClientsController> logger, IClientService clientService)
         {
             _logger = logger;
             _clientService = clientService;
         }
 
-        // GET: Clients
+        #endregion
+
+
+        #region Default CRUD Calls
+
+
+        #endregion
+
+
+        #region Default CRUD Calls
+
+
+        /// <summary>
+        /// // GET: Clients
+        /// </summary>
+        /// <returns></returns>
         public async Task<IActionResult> Index()
         {
-            IList<Client> clientList = _clientService.GetAllClients();
-              return clientList.Count != null ? 
-                          View(clientList) :
-                          Problem("Entity set 'BswebReportsContext.Clients'  is null.");
+            IList<Client> clientList = new List<Client>();
+            try
+            {
+                clientList = _clientService.GetAllClients();
+            }
+            catch (ValidationException vex)
+            {
+                TempData["ErrorMessage"] = vex.GetConcatenatedValidationMessages();
+            }
+            return View(clientList);
         }
 
-        // GET: Clients/Details/5
+
+        /// <summary>
+        /// // GET: Clients/Details/5
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null )
+            if (id.HasValue)
             {
-                return NotFound();
+                Client clientInfo = null;
+                try
+                {
+                    clientInfo = _clientService.GetClientById(id.Value);
+                }
+                catch (ValidationException vex)
+                {
+                    TempData["ErrorMessage"] = vex.GetConcatenatedValidationMessages();
+                }
+                return View(clientInfo);
             }
-
-            var client = _clientService.GetClientById(id.GetValueOrDefault());
-            if (client == null)
+            else
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Not a valid request.";
+                return RedirectToAction("Index");
             }
-
-            return View(client);
         }
 
-        // GET: Clients/Create
+
+        /// <summary>
+        /// // GET: Clients/Create
+        /// </summary>
+        /// <returns></returns>
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Clients/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        /// <summary>
+        /// // POST: Clients/Create
+        /// To protect from overposting attacks, enable the specific properties you want to bind to.
+        /// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// </summary>
+        /// <param name="client"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,DisplayName,Description,IsActive")] Client client)
+        public async Task<IActionResult> Create(Client clientInfo)
         {
-            if (ModelState.IsValid)
-            {
-                _clientService.CreateClient(client);
-                return RedirectToAction(nameof(Index));
-            }
-            return View(client);
+            //if (ModelState.IsValid)
+            //{
+                try
+                {
+                    if (_clientService.CheckClientExists(clientInfo.Name))
+                    {
+                        TempData["ErrorMessage"] = "Client name already in use. Please use another name.";
+                    }
+                    else
+                    {
+                        
+                        //clientInfo.CreatedBy = clientInfo.LastUpdatedBy = _GetUserData().Id;                        
+                        clientInfo = _clientService.CreateClient(clientInfo);
+
+                        TempData["SuccessMessage"] = "Client has been added successfully.";
+                        return RedirectToAction("Index");
+                    }
+                }
+                catch (ValidationException vex)
+                {
+                    TempData["ErrorMessage"] = vex.GetConcatenatedValidationMessages();
+                }
+            //}
+            //else
+            //{
+            //    TempData["ErrorMessage"] = "Invalid data submitted. Please provide valid information.";
+            //}
+            return View(clientInfo);
         }
 
-        // GET: Clients/Edit/5
+
+        /// <summary>
+        /// // GET: Clients/Edit/5
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
+            if (id.HasValue)
             {
-                return NotFound();
+                Client clientInfo = null;
+                try
+                {
+                    clientInfo = _clientService.GetClientById(id.Value);
+                }
+                catch (ValidationException vex)
+                {
+                    TempData["ErrorMessage"] = vex.GetConcatenatedValidationMessages();
+                }
+                return View(clientInfo);
             }
-
-            var client = _clientService.GetClientById(id.GetValueOrDefault());
-            if (client == null)
+            else
             {
-                return NotFound();
+                TempData["ErrorMessage"] = "Not a valid request.";
+                return RedirectToAction("Index");
             }
-            return View(client);
         }
 
-        // POST: Clients/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        /// <summary>
+        /// // POST: Clients/Edit/5
+        /// To protect from overposting attacks, enable the specific properties you want to bind to.
+        /// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="client"></param>
+        /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,DisplayName,Description,IsActive")] Client client)
+        public async Task<IActionResult> Edit(Client clientInfo)
         {
-            if (id != client.Id)
-            {
-                return NotFound();
-            }
-
             if (ModelState.IsValid)
             {
                 try
                 {
-                    _clientService.EditClient(client);
+                    //clientInfo.UpdatedBy = _GetUserData().Id;
+                    clientInfo = _clientService.EditClient(clientInfo);
+                    return RedirectToAction("Index");
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (ValidationException vex)
                 {
-                    //if (!ClientExists(client.Id))
-                    //{
-                    //    return NotFound();
-                    //}
-                    //else
-                    //{
-                    //    throw;
-                    //}
+                    TempData["ErrorMessage"] = vex.GetConcatenatedValidationMessages();
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(client);
+            else
+            {
+                TempData["ErrorMessage"] = "Invalid data submitted. Please provide valid information.";
+            }
+            return View(clientInfo);            
         }
 
-        // GET: Clients/Delete/5
+
+        /// <summary>
+        /// // POST: Clients/Delete/5
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost, ActionName("Delete")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
+            var result = new AjaxResultData();
+            try
             {
-                return NotFound();
+                if (id.HasValue)
+                {
+                    _clientService.DeleteClient(id.Value);
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Message = "Please select a valid record to delete.";
+                }
             }
-
-            var client = _clientService.GetClientById(id.GetValueOrDefault());
-            if (client == null)
+            catch (ValidationException vex)
             {
-                return NotFound();
+                result.Success = false;
+                result.Message = vex.GetConcatenatedValidationMessages();
             }
-
-            return View(client);
+            return this.Json(result);
         }
 
-        // POST: Clients/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            
-            var client = _clientService.GetClientById(id);
-            if (client != null)
-            {
-                _clientService.DeleteClient(id);
-            }
-            return RedirectToAction(nameof(Index));
-        }
+        #endregion
 
-        //private bool ClientExists(int id)
-        //{
-        //  return (_context.Clients?.Any(e => e.Id == id)).GetValueOrDefault();
-        //}
     }
 }

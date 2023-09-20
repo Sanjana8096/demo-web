@@ -44,7 +44,7 @@ namespace WebReports.Repository
         {
             try
             {
-                
+
                 //clientInfo.CreatedBy = 
                 //clientInfo.CreatedOn = DateTime.Now;
                 _dbContext.Add(clientInfo);
@@ -54,7 +54,7 @@ namespace WebReports.Repository
             {
                 _logger.LogError(ex, ex.Message);
                 throw;
-            }            
+            }
             return clientInfo;
         }
 
@@ -148,6 +148,30 @@ namespace WebReports.Repository
         #endregion
 
         #region Other Calls
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public bool CheckClientExists(string name)
+        {
+            bool hasClient = false;
+            try
+            {
+                Client clientInfo = _dbContext.Clients.FirstOrDefault(m => m.Name.Equals(name));
+                if (null != clientInfo)
+                {
+                    hasClient = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message);
+                throw;
+            }
+            return hasClient;
+        }
 
         #endregion
 

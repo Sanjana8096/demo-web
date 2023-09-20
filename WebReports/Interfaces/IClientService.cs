@@ -45,6 +45,13 @@ namespace WebReports.Interfaces
 
         #region Other Calls
 
+        /// <summary>
+        /// Checks whether the client exists. Name is unique
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public bool CheckClientExists(string name);
+
         #endregion
 
     }
