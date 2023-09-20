@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebReports.Models;
 
-public partial class BswebReportsContext : DbContext
+public partial class BswebReportsDbContext : DbContext
 {
-    public BswebReportsContext()
+    public BswebReportsDbContext()
     {
     }
 
-    public BswebReportsContext(DbContextOptions<BswebReportsContext> options)
+    public BswebReportsDbContext(DbContextOptions<BswebReportsDbContext> options)
         : base(options)
     {
     }
@@ -34,7 +34,8 @@ public partial class BswebReportsContext : DbContext
     public virtual DbSet<ClientUser> ClientUsers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=BSWebReportsDB;Integrated Security=True;Connect Timeout=30;Encrypt=False;Trust Server Certificate=False;Application Intent=ReadWrite;Multi Subnet Failover=False");
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+        => optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=BSWebReportsDB;Trusted_Connection=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -112,43 +113,102 @@ public partial class BswebReportsContext : DbContext
 
         modelBuilder.Entity<Client>(entity =>
         {
+            entity.Property(e => e.CreatedBy).HasMaxLength(450);
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
             entity.Property(e => e.Description)
                 .HasMaxLength(2000)
                 .IsUnicode(false);
             entity.Property(e => e.DisplayName)
                 .HasMaxLength(20)
                 .IsUnicode(false);
+            entity.Property(e => e.LastUpdatedBy).HasMaxLength(450);
+            entity.Property(e => e.LastUpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
             entity.Property(e => e.Name)
                 .HasMaxLength(200)
                 .IsUnicode(false);
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ClientCreatedByNavigations)
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Clients_AspNetUsers_Cb");
+
+            entity.HasOne(d => d.LastUpdatedByNavigation).WithMany(p => p.ClientLastUpdatedByNavigations)
+                .HasForeignKey(d => d.LastUpdatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Clients_AspNetUsers_Lub");
         });
 
         modelBuilder.Entity<ClientMenu>(entity =>
         {
+            entity.HasIndex(e => e.ClientId, "IX_ClientMenus_ClientId");
+
+            entity.Property(e => e.CreatedBy).HasMaxLength(450);
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.LastUpdateOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.LastUpdatedBy).HasMaxLength(450);
             entity.Property(e => e.MenuUrl)
                 .HasMaxLength(500)
                 .IsUnicode(false);
 
-            //entity.HasOne(d => d.Client).WithMany(p => p.ClientMenus)
-            //    .HasForeignKey(d => d.ClientId)
-            //    .OnDelete(DeleteBehavior.ClientSetNull)
-            //    .HasConstraintName("FK_ClientMenus_Clients");
+            entity.HasOne(d => d.Client).WithMany(p => p.ClientMenus)
+                .HasForeignKey(d => d.ClientId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ClientMenus_Clients");
+
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ClientMenuCreatedByNavigations)
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ClientMenus_AspNetUsers");
+
+            entity.HasOne(d => d.LastUpdatedByNavigation).WithMany(p => p.ClientMenuLastUpdatedByNavigations)
+                .HasForeignKey(d => d.LastUpdatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ClientMenus_AspNetUsers1");
         });
 
         modelBuilder.Entity<ClientUser>(entity =>
         {
+            entity.HasIndex(e => e.ClientId, "IX_ClientUsers_ClientId");
+
+            entity.HasIndex(e => e.UserId, "IX_ClientUsers_UserId");
+
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.UserId).HasMaxLength(450);
+            entity.Property(e => e.CreatedBy).HasMaxLength(450);
+            entity.Property(e => e.CreatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
+            entity.Property(e => e.LastUpdatedBy).HasMaxLength(450);
+            entity.Property(e => e.LastUpdatedOn)
+                .HasDefaultValueSql("(getdate())")
+                .HasColumnType("datetime");
 
             entity.HasOne(d => d.Client).WithMany(p => p.ClientUsers)
                 .HasForeignKey(d => d.ClientId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_ClientUsers_Clients");
 
-            //entity.HasOne(d => d.User).WithMany(p => p.ClientUsers)
-            //    .HasForeignKey(d => d.UserId)
-            //    .OnDelete(DeleteBehavior.ClientSetNull)
-            //    .HasConstraintName("FK_ClientUsers_AspNetUsers");
+            entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ClientUserCreatedByNavigations)
+                .HasForeignKey(d => d.CreatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ClientUsers_AspNetUsers_CB");
+
+            entity.HasOne(d => d.LastUpdatedByNavigation).WithMany(p => p.ClientUserLastUpdatedByNavigations)
+                .HasForeignKey(d => d.LastUpdatedBy)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ClientUsers_AspNetUsers_LUB");
+
+            entity.HasOne(d => d.User).WithMany(p => p.ClientUserUsers)
+                .HasForeignKey(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_ClientUsers_AspNetUsers_UI");
         });
 
         OnModelCreatingPartial(modelBuilder);

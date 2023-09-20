@@ -41,7 +41,19 @@ public partial class AspNetUser
 
     public virtual ICollection<AspNetUserToken> AspNetUserTokens { get; set; } = new List<AspNetUserToken>();
 
-    public virtual ICollection<ClientUser> ClientUsers { get; set; } = new List<ClientUser>();
+    public virtual ICollection<Client> ClientCreatedByNavigations { get; set; } = new List<Client>();
+
+    public virtual ICollection<Client> ClientLastUpdatedByNavigations { get; set; } = new List<Client>();
+
+    public virtual ICollection<ClientMenu> ClientMenuCreatedByNavigations { get; set; } = new List<ClientMenu>();
+
+    public virtual ICollection<ClientMenu> ClientMenuLastUpdatedByNavigations { get; set; } = new List<ClientMenu>();
+
+    public virtual ICollection<ClientUser> ClientUserCreatedByNavigations { get; set; } = new List<ClientUser>();
+
+    public virtual ICollection<ClientUser> ClientUserLastUpdatedByNavigations { get; set; } = new List<ClientUser>();
+
+    public virtual ICollection<ClientUser> ClientUserUsers { get; set; } = new List<ClientUser>();
 
     public virtual ICollection<AspNetRole> Roles { get; set; } = new List<AspNetRole>();
 }
