@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebReports.Models;
 
@@ -10,10 +11,12 @@ using WebReports.Models;
 
 namespace WebReports.Migrations
 {
-    [DbContext(typeof(BswebReportsContext))]
-    partial class BswebReportsContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(BSWebReportsDbContext))]
+    [Migration("20230920120410_createdafreshdb")]
+    partial class createdafreshdb
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -227,6 +230,16 @@ namespace WebReports.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
                     b.Property<string>("Description")
                         .HasMaxLength(2000)
                         .IsUnicode(false)
@@ -240,6 +253,16 @@ namespace WebReports.Migrations
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
+                    b.Property<string>("LastUpdatedBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(200)
@@ -247,6 +270,10 @@ namespace WebReports.Migrations
                         .HasColumnType("varchar(200)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CreatedBy");
+
+                    b.HasIndex("LastUpdatedBy");
 
                     b.ToTable("Clients");
                 });
@@ -262,8 +289,26 @@ namespace WebReports.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
+
+                    b.Property<DateTime>("LastUpdateOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("MenuOrder")
                         .HasColumnType("int");
@@ -276,7 +321,11 @@ namespace WebReports.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex(new[] { "ClientId" }, "IX_ClientMenus_ClientId");
+
+                    b.HasIndex(new[] { "CreatedBy" }, "IX_ClientMenus_CreatedBy");
+
+                    b.HasIndex(new[] { "LastUpdatedBy" }, "IX_ClientMenus_LastUpdatedBy");
 
                     b.ToTable("ClientMenus");
                 });
@@ -289,16 +338,37 @@ namespace WebReports.Migrations
                     b.Property<int>("ClientId")
                         .HasColumnType("int");
 
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("LastUpdatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("ClientId");
+                    b.HasIndex(new[] { "ClientId" }, "IX_ClientUsers_ClientId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex(new[] { "CreatedBy" }, "IX_ClientUsers_CreatedBy");
+
+                    b.HasIndex(new[] { "LastUpdatedBy" }, "IX_ClientUsers_LastUpdatedBy");
+
+                    b.HasIndex(new[] { "UserId" }, "IX_ClientUsers_UserId");
 
                     b.ToTable("ClientUsers");
                 });
@@ -362,6 +432,25 @@ namespace WebReports.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("WebReports.Models.Client", b =>
+                {
+                    b.HasOne("WebReports.Models.AspNetUser", "CreatedByNavigation")
+                        .WithMany("ClientCreatedByNavigations")
+                        .HasForeignKey("CreatedBy")
+                        .IsRequired()
+                        .HasConstraintName("FK_Clients_AspNetUsers_CB");
+
+                    b.HasOne("WebReports.Models.AspNetUser", "LastUpdatedByNavigation")
+                        .WithMany("ClientLastUpdatedByNavigations")
+                        .HasForeignKey("LastUpdatedBy")
+                        .IsRequired()
+                        .HasConstraintName("FK_Clients_AspNetUsers_LUB");
+
+                    b.Navigation("CreatedByNavigation");
+
+                    b.Navigation("LastUpdatedByNavigation");
+                });
+
             modelBuilder.Entity("WebReports.Models.ClientMenu", b =>
                 {
                     b.HasOne("WebReports.Models.Client", "Client")
@@ -370,7 +459,23 @@ namespace WebReports.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_ClientMenus_Clients");
 
+                    b.HasOne("WebReports.Models.AspNetUser", "CreatedByNavigation")
+                        .WithMany("ClientMenuCreatedByNavigations")
+                        .HasForeignKey("CreatedBy")
+                        .IsRequired()
+                        .HasConstraintName("FK_ClientMenus_AspNetUsers");
+
+                    b.HasOne("WebReports.Models.AspNetUser", "LastUpdatedByNavigation")
+                        .WithMany("ClientMenuLastUpdatedByNavigations")
+                        .HasForeignKey("LastUpdatedBy")
+                        .IsRequired()
+                        .HasConstraintName("FK_ClientMenus_AspNetUsers1");
+
                     b.Navigation("Client");
+
+                    b.Navigation("CreatedByNavigation");
+
+                    b.Navigation("LastUpdatedByNavigation");
                 });
 
             modelBuilder.Entity("WebReports.Models.ClientUser", b =>
@@ -381,13 +486,29 @@ namespace WebReports.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_ClientUsers_Clients");
 
+                    b.HasOne("WebReports.Models.AspNetUser", "CreatedByNavigation")
+                        .WithMany("ClientUserCreatedByNavigations")
+                        .HasForeignKey("CreatedBy")
+                        .IsRequired()
+                        .HasConstraintName("FK_ClientUsers_AspNetUsers_CB");
+
+                    b.HasOne("WebReports.Models.AspNetUser", "LastUpdatedByNavigation")
+                        .WithMany("ClientUserLastUpdatedByNavigations")
+                        .HasForeignKey("LastUpdatedBy")
+                        .IsRequired()
+                        .HasConstraintName("FK_ClientUsers_AspNetUsers_LUB");
+
                     b.HasOne("WebReports.Models.AspNetUser", "User")
-                        .WithMany("ClientUsers")
+                        .WithMany("ClientUserUsers")
                         .HasForeignKey("UserId")
                         .IsRequired()
-                        .HasConstraintName("FK_ClientUsers_AspNetUsers");
+                        .HasConstraintName("FK_ClientUsers_AspNetUsers_UI");
 
                     b.Navigation("Client");
+
+                    b.Navigation("CreatedByNavigation");
+
+                    b.Navigation("LastUpdatedByNavigation");
 
                     b.Navigation("User");
                 });
@@ -405,7 +526,19 @@ namespace WebReports.Migrations
 
                     b.Navigation("AspNetUserTokens");
 
-                    b.Navigation("ClientUsers");
+                    b.Navigation("ClientCreatedByNavigations");
+
+                    b.Navigation("ClientLastUpdatedByNavigations");
+
+                    b.Navigation("ClientMenuCreatedByNavigations");
+
+                    b.Navigation("ClientMenuLastUpdatedByNavigations");
+
+                    b.Navigation("ClientUserCreatedByNavigations");
+
+                    b.Navigation("ClientUserLastUpdatedByNavigations");
+
+                    b.Navigation("ClientUserUsers");
                 });
 
             modelBuilder.Entity("WebReports.Models.Client", b =>

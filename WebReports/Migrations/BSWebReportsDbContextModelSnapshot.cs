@@ -8,10 +8,10 @@ using WebReports.Models;
 
 #nullable disable
 
-namespace WebReports.Migrations.BswebReportsDb
+namespace WebReports.Migrations
 {
-    [DbContext(typeof(BswebReportsDbContext))]
-    partial class BswebReportsDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(BSWebReportsDbContext))]
+    partial class BSWebReportsDbContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
         {
@@ -288,7 +288,6 @@ namespace WebReports.Migrations.BswebReportsDb
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
@@ -306,7 +305,6 @@ namespace WebReports.Migrations.BswebReportsDb
 
                     b.Property<string>("LastUpdatedBy")
                         .IsRequired()
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("MenuOrder")
@@ -320,11 +318,11 @@ namespace WebReports.Migrations.BswebReportsDb
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
-
-                    b.HasIndex("LastUpdatedBy");
-
                     b.HasIndex(new[] { "ClientId" }, "IX_ClientMenus_ClientId");
+
+                    b.HasIndex(new[] { "CreatedBy" }, "IX_ClientMenus_CreatedBy");
+
+                    b.HasIndex(new[] { "LastUpdatedBy" }, "IX_ClientMenus_LastUpdatedBy");
 
                     b.ToTable("ClientMenus");
                 });
@@ -339,7 +337,6 @@ namespace WebReports.Migrations.BswebReportsDb
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("CreatedOn")
@@ -349,7 +346,6 @@ namespace WebReports.Migrations.BswebReportsDb
 
                     b.Property<string>("LastUpdatedBy")
                         .IsRequired()
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<DateTime>("LastUpdatedOn")
@@ -363,11 +359,11 @@ namespace WebReports.Migrations.BswebReportsDb
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatedBy");
-
-                    b.HasIndex("LastUpdatedBy");
-
                     b.HasIndex(new[] { "ClientId" }, "IX_ClientUsers_ClientId");
+
+                    b.HasIndex(new[] { "CreatedBy" }, "IX_ClientUsers_CreatedBy");
+
+                    b.HasIndex(new[] { "LastUpdatedBy" }, "IX_ClientUsers_LastUpdatedBy");
 
                     b.HasIndex(new[] { "UserId" }, "IX_ClientUsers_UserId");
 
@@ -439,13 +435,13 @@ namespace WebReports.Migrations.BswebReportsDb
                         .WithMany("ClientCreatedByNavigations")
                         .HasForeignKey("CreatedBy")
                         .IsRequired()
-                        .HasConstraintName("FK_Clients_AspNetUsers_Cb");
+                        .HasConstraintName("FK_Clients_AspNetUsers_CB");
 
                     b.HasOne("WebReports.Models.AspNetUser", "LastUpdatedByNavigation")
                         .WithMany("ClientLastUpdatedByNavigations")
                         .HasForeignKey("LastUpdatedBy")
                         .IsRequired()
-                        .HasConstraintName("FK_Clients_AspNetUsers_Lub");
+                        .HasConstraintName("FK_Clients_AspNetUsers_LUB");
 
                     b.Navigation("CreatedByNavigation");
 

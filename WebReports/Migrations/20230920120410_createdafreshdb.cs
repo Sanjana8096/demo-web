@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WebReports.Migrations
 {
     /// <inheritdoc />
-    public partial class inital : Migration
+    public partial class createdafreshdb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,22 +48,6 @@ namespace WebReports.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Clients",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
-                    DisplayName = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
-                    Description = table.Column<string>(type: "varchar(2000)", unicode: false, maxLength: 2000, nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Clients", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -173,6 +157,36 @@ namespace WebReports.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Clients",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "varchar(200)", unicode: false, maxLength: 200, nullable: false),
+                    DisplayName = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
+                    Description = table.Column<string>(type: "varchar(2000)", unicode: false, maxLength: 2000, nullable: true),
+                    IsActive = table.Column<bool>(type: "bit", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
+                    LastUpdatedOn = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Clients", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Clients_AspNetUsers_CB",
+                        column: x => x.CreatedBy,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Clients_AspNetUsers_LUB",
+                        column: x => x.LastUpdatedBy,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "ClientMenus",
                 columns: table => new
                 {
@@ -181,11 +195,25 @@ namespace WebReports.Migrations
                     ClientId = table.Column<int>(type: "int", nullable: false),
                     MenuUrl = table.Column<string>(type: "varchar(500)", unicode: false, maxLength: 500, nullable: false),
                     MenuOrder = table.Column<int>(type: "int", nullable: true),
-                    IsActive = table.Column<bool>(type: "bit", nullable: true)
+                    IsActive = table.Column<bool>(type: "bit", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
+                    LastUpdateOn = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientMenus", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ClientMenus_AspNetUsers",
+                        column: x => x.CreatedBy,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ClientMenus_AspNetUsers1",
+                        column: x => x.LastUpdatedBy,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ClientMenus_Clients",
                         column: x => x.ClientId,
@@ -198,14 +226,28 @@ namespace WebReports.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(450)", maxLength: 450, nullable: false),
-                    ClientId = table.Column<int>(type: "int", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    ClientId = table.Column<int>(type: "int", nullable: false),
+                    CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    LastUpdatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    CreatedOn = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
+                    LastUpdatedOn = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ClientUsers", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ClientUsers_AspNetUsers",
+                        name: "FK_ClientUsers_AspNetUsers_CB",
+                        column: x => x.CreatedBy,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ClientUsers_AspNetUsers_LUB",
+                        column: x => x.LastUpdatedBy,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ClientUsers_AspNetUsers_UI",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
@@ -261,9 +303,39 @@ namespace WebReports.Migrations
                 column: "ClientId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ClientMenus_CreatedBy",
+                table: "ClientMenus",
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientMenus_LastUpdatedBy",
+                table: "ClientMenus",
+                column: "LastUpdatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Clients_CreatedBy",
+                table: "Clients",
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Clients_LastUpdatedBy",
+                table: "Clients",
+                column: "LastUpdatedBy");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ClientUsers_ClientId",
                 table: "ClientUsers",
                 column: "ClientId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientUsers_CreatedBy",
+                table: "ClientUsers",
+                column: "CreatedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ClientUsers_LastUpdatedBy",
+                table: "ClientUsers",
+                column: "LastUpdatedBy");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ClientUsers_UserId",
@@ -299,10 +371,10 @@ namespace WebReports.Migrations
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "AspNetUsers");
+                name: "Clients");
 
             migrationBuilder.DropTable(
-                name: "Clients");
+                name: "AspNetUsers");
         }
     }
 }

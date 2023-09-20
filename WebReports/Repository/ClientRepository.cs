@@ -15,7 +15,7 @@ namespace WebReports.Repository
         /// </summary>
         private ILogger<ClientRepository> _logger;
 
-        private readonly BswebReportsContext _dbContext;
+        private readonly BSWebReportsDbContext _dbContext;
 
         #endregion
 
@@ -25,7 +25,7 @@ namespace WebReports.Repository
         /// Constructor
         /// </summary>
         /// <param name="logger"></param>
-        public ClientRepository(ILogger<ClientRepository> logger, BswebReportsContext dbContext)
+        public ClientRepository(ILogger<ClientRepository> logger, BSWebReportsDbContext dbContext)
         {
             _logger = logger;
             _dbContext = dbContext;

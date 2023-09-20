@@ -4,13 +4,13 @@ using Microsoft.EntityFrameworkCore;
 
 namespace WebReports.Models;
 
-public partial class BswebReportsDbContext : DbContext
+public partial class BSWebReportsDbContext : DbContext
 {
-    public BswebReportsDbContext()
+    public BSWebReportsDbContext()
     {
     }
 
-    public BswebReportsDbContext(DbContextOptions<BswebReportsDbContext> options)
+    public BSWebReportsDbContext(DbContextOptions<BSWebReportsDbContext> options)
         : base(options)
     {
     }
@@ -35,7 +35,7 @@ public partial class BswebReportsDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=BSWebReportsDB;Trusted_Connection=True;");
+        => optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=BSWebReports;Trusted_Connection=True;");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -134,26 +134,28 @@ public partial class BswebReportsDbContext : DbContext
             entity.HasOne(d => d.CreatedByNavigation).WithMany(p => p.ClientCreatedByNavigations)
                 .HasForeignKey(d => d.CreatedBy)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Clients_AspNetUsers_Cb");
+                .HasConstraintName("FK_Clients_AspNetUsers_CB");
 
             entity.HasOne(d => d.LastUpdatedByNavigation).WithMany(p => p.ClientLastUpdatedByNavigations)
                 .HasForeignKey(d => d.LastUpdatedBy)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Clients_AspNetUsers_Lub");
+                .HasConstraintName("FK_Clients_AspNetUsers_LUB");
         });
 
         modelBuilder.Entity<ClientMenu>(entity =>
         {
             entity.HasIndex(e => e.ClientId, "IX_ClientMenus_ClientId");
 
-            entity.Property(e => e.CreatedBy).HasMaxLength(450);
+            entity.HasIndex(e => e.CreatedBy, "IX_ClientMenus_CreatedBy");
+
+            entity.HasIndex(e => e.LastUpdatedBy, "IX_ClientMenus_LastUpdatedBy");
+
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.LastUpdateOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.LastUpdatedBy).HasMaxLength(450);
             entity.Property(e => e.MenuUrl)
                 .HasMaxLength(500)
                 .IsUnicode(false);
@@ -178,14 +180,16 @@ public partial class BswebReportsDbContext : DbContext
         {
             entity.HasIndex(e => e.ClientId, "IX_ClientUsers_ClientId");
 
+            entity.HasIndex(e => e.CreatedBy, "IX_ClientUsers_CreatedBy");
+
+            entity.HasIndex(e => e.LastUpdatedBy, "IX_ClientUsers_LastUpdatedBy");
+
             entity.HasIndex(e => e.UserId, "IX_ClientUsers_UserId");
 
             entity.Property(e => e.Id).ValueGeneratedNever();
-            entity.Property(e => e.CreatedBy).HasMaxLength(450);
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
-            entity.Property(e => e.LastUpdatedBy).HasMaxLength(450);
             entity.Property(e => e.LastUpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
