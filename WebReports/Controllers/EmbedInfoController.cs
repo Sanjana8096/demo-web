@@ -30,7 +30,7 @@ namespace WebReports.Controllers
         /// </summary>
         /// <returns>JSON containing parameters for embedding</returns>
         [HttpGet]
-        public string GetEmbedInfo()
+        public string GetEmbedInfo(string workspaceid, string reportid)
         {
             try
             {
@@ -42,7 +42,8 @@ namespace WebReports.Controllers
                     return configValidationResult;
                 }
 
-                EmbedParams embedParams = pbiEmbedService.GetEmbedParams(new Guid(powerBI.Value.WorkspaceId), new Guid(powerBI.Value.ReportId));
+                //EmbedParams embedParams = pbiEmbedService.GetEmbedParams(new Guid(powerBI.Value.WorkspaceId), new Guid(powerBI.Value.ReportId));
+                EmbedParams embedParams = pbiEmbedService.GetEmbedParams(new Guid(workspaceid), new Guid(reportid));
                 return JsonSerializer.Serialize<EmbedParams>(embedParams);
             }
             catch (Exception ex)
