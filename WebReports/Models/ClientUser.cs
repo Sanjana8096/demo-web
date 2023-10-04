@@ -19,6 +19,10 @@ public partial class ClientUser
 
     public DateTime LastUpdatedOn { get; set; }
 
+    public bool? IsAcive { get; set; }
+
+    public DateTime? DisabledOn { get; set; }
+
     public virtual Client Client { get; set; } = null!;
 
     public virtual AspNetUser CreatedByNavigation { get; set; } = null!;

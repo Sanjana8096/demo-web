@@ -113,17 +113,20 @@ public partial class BSWebReportsDbContext : DbContext
 
         modelBuilder.Entity<Client>(entity =>
         {
-            entity.Property(e => e.CreatedBy).HasMaxLength(450);
+            entity.HasIndex(e => e.CreatedBy, "IX_Clients_CreatedBy");
+
+            entity.HasIndex(e => e.LastUpdatedBy, "IX_Clients_LastUpdatedBy");
+
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.Description)
                 .HasMaxLength(2000)
                 .IsUnicode(false);
+            entity.Property(e => e.DisabledOn).HasColumnType("datetime");
             entity.Property(e => e.DisplayName)
                 .HasMaxLength(20)
                 .IsUnicode(false);
-            entity.Property(e => e.LastUpdatedBy).HasMaxLength(450);
             entity.Property(e => e.LastUpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
@@ -144,20 +147,26 @@ public partial class BSWebReportsDbContext : DbContext
 
         modelBuilder.Entity<ClientMenu>(entity =>
         {
-            entity.HasIndex(e => e.ClientId, "IX_ClientMenus_ClientId");
-
-            entity.HasIndex(e => e.CreatedBy, "IX_ClientMenus_CreatedBy");
-
-            entity.HasIndex(e => e.LastUpdatedBy, "IX_ClientMenus_LastUpdatedBy");
-
+            entity.Property(e => e.CreatedBy).HasMaxLength(450);
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.DisabledOn).HasColumnType("datetime");
             entity.Property(e => e.LastUpdateOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.LastUpdatedBy).HasMaxLength(450);
             entity.Property(e => e.MenuUrl)
                 .HasMaxLength(500)
+                .IsUnicode(false);
+            entity.Property(e => e.ReportId)
+                .HasMaxLength(256)
+                .IsUnicode(false);
+            entity.Property(e => e.ReportName)
+                .HasMaxLength(250)
+                .IsUnicode(false);
+            entity.Property(e => e.WorkspaceId)
+                .HasMaxLength(256)
                 .IsUnicode(false);
 
             entity.HasOne(d => d.Client).WithMany(p => p.ClientMenus)
@@ -186,10 +195,10 @@ public partial class BSWebReportsDbContext : DbContext
 
             entity.HasIndex(e => e.UserId, "IX_ClientUsers_UserId");
 
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.CreatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
+            entity.Property(e => e.DisabledOn).HasColumnType("datetime");
             entity.Property(e => e.LastUpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");

@@ -23,6 +23,8 @@ public partial class Client
 
     public DateTime LastUpdatedOn { get; set; }
 
+    public DateTime? DisabledOn { get; set; }
+
     public virtual ICollection<ClientMenu> ClientMenus { get; set; } = new List<ClientMenu>();
 
     public virtual ICollection<ClientUser> ClientUsers { get; set; } = new List<ClientUser>();

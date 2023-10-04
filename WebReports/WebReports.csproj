@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Models\BswebReportsContext.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="EnterpriseLibrary.Validation" Version="6.0.1304" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.AzureAD.UI" Version="6.0.22" />

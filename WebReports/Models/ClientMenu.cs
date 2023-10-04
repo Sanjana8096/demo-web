@@ -23,6 +23,14 @@ public partial class ClientMenu
 
     public DateTime LastUpdateOn { get; set; }
 
+    public string ReportName { get; set; } = null!;
+
+    public string WorkspaceId { get; set; } = null!;
+
+    public string ReportId { get; set; } = null!;
+
+    public DateTime? DisabledOn { get; set; }
+
     public virtual Client Client { get; set; } = null!;
 
     public virtual AspNetUser CreatedByNavigation { get; set; } = null!;
