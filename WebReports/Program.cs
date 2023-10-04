@@ -33,7 +33,7 @@ builder.Services.AddAuthentication(sharedOptions =>
 }).AddAzureAD(options => builder.Configuration.Bind("AzureAd", options)).AddCookie();
 
 //pbiembed
-builder.Services.Configure<AzureAd>(builder.Configuration.GetSection("AzureAd-PBI"))
+builder.Services.Configure<AzureAd>(builder.Configuration.GetSection("AzureAd"))
                    .Configure<PowerBI>(builder.Configuration.GetSection("PowerBI"));
 
 var app = builder.Build();
