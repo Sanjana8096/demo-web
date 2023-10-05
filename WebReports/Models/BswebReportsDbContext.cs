@@ -34,7 +34,13 @@ public partial class BSWebReportsDbContext : DbContext
     public virtual DbSet<ClientUser> ClientUsers { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseSqlServer("data source=vut-cmp-dev-sqlserver.database.windows.net;initial catalog=BSWebReports;persist security info=True;user id=snpadmin;password=snp@1234;MultipleActiveResultSets=True;");
+    {
+        IConfigurationRoot config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .Build();
+
+        optionsBuilder.UseSqlServer(config.GetConnectionString("DefaultConnection"));
+    }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
