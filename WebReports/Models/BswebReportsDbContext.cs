@@ -157,7 +157,7 @@ public partial class BSWebReportsDbContext : DbContext
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.DisabledOn).HasColumnType("datetime");
-            entity.Property(e => e.LastUpdateOn)
+            entity.Property(e => e.LastUpdatedOn)
                 .HasDefaultValueSql("(getdate())")
                 .HasColumnType("datetime");
             entity.Property(e => e.LastUpdatedBy).HasMaxLength(450);

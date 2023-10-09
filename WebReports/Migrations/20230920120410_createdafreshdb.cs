@@ -199,7 +199,7 @@ namespace WebReports.Migrations
                     CreatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     LastUpdatedBy = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedOn = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())"),
-                    LastUpdateOn = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())")
+                    LastUpdatedOn = table.Column<DateTime>(type: "datetime", nullable: false, defaultValueSql: "(getdate())")
                 },
                 constraints: table =>
                 {

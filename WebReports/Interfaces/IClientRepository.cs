@@ -51,7 +51,7 @@ namespace WebReports.Interfaces
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public bool CheckClientExists(string name);
+        bool CheckClientExists(string name);
 
         #endregion
 

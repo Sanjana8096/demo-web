@@ -124,10 +124,10 @@ namespace WebReports.Controllers
         /// <returns></returns>
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Client clientInfo)
+        public async Task<IActionResult> Create([Bind("Name,DisplayName,Description,IsAcive")] Client clientInfo)
         {
-            //if (ModelState.IsValid)
-            //{
+            if (ModelState.IsValid)
+            {
                 try
                 {
                     if (_clientService.CheckClientExists(clientInfo.Name))
@@ -136,8 +136,9 @@ namespace WebReports.Controllers
                     }
                     else
                     {
-                        
-                        //clientInfo.CreatedBy = clientInfo.LastUpdatedBy = _GetUserData().Id;                        
+                        // Set logged in user id for created and last updated by properties.
+                        clientInfo.CreatedBy = clientInfo.LastUpdatedBy = User.Claims.First(c => c.Type.EndsWith("nameidentifier")).Value;
+                        // create a new record in database
                         clientInfo = _clientService.CreateClient(clientInfo);
 
                         TempData["SuccessMessage"] = "Client has been added successfully.";
@@ -148,11 +149,11 @@ namespace WebReports.Controllers
                 {
                     TempData["ErrorMessage"] = vex.GetConcatenatedValidationMessages();
                 }
-            //}
-            //else
-            //{
-            //    TempData["ErrorMessage"] = "Invalid data submitted. Please provide valid information.";
-            //}
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Invalid data submitted. Please provide valid information.";
+            }
             return View(clientInfo);
         }
 

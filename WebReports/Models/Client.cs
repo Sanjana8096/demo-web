@@ -15,13 +15,13 @@ public partial class Client
 
     public bool? IsActive { get; set; }
 
-    public string CreatedBy { get; set; } = null!;
+    public string? CreatedBy { get; set; } = null!;
 
-    public string LastUpdatedBy { get; set; } = null!;
+    public string? LastUpdatedBy { get; set; } = null!;
 
-    public DateTime CreatedOn { get; set; }
+    public DateTime? CreatedOn { get; set; }
 
-    public DateTime LastUpdatedOn { get; set; }
+    public DateTime? LastUpdatedOn { get; set; }
 
     public DateTime? DisabledOn { get; set; }
 
@@ -29,7 +29,7 @@ public partial class Client
 
     public virtual ICollection<ClientUser> ClientUsers { get; set; } = new List<ClientUser>();
 
-    public virtual AspNetUser CreatedByNavigation { get; set; } = null!;
+    public virtual AspNetUser? CreatedByNavigation { get; set; } = null!;
 
-    public virtual AspNetUser LastUpdatedByNavigation { get; set; } = null!;
+    public virtual AspNetUser? LastUpdatedByNavigation { get; set; } = null!;
 }

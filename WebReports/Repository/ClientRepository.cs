@@ -44,8 +44,6 @@ namespace WebReports.Repository
         {
             try
             {
-
-                clientInfo.CreatedBy = clientInfo.LastUpdatedBy = "95c8645d-9059-4bfb-a4d3-42dfc1b04a21";
                 clientInfo.CreatedOn = clientInfo.LastUpdatedOn=DateTime.Now;
                 _dbContext.Add(clientInfo);
                 _dbContext.SaveChanges();

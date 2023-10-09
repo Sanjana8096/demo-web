@@ -228,11 +228,9 @@ namespace WebReports.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("CreatedOn")
+                    b.Property<DateTime?>("CreatedOn")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
@@ -242,10 +240,63 @@ namespace WebReports.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(2000)");
 
+                    b.Property<DateTime?>("DisabledOn")
+                        .HasColumnType("datetime");
+
                     b.Property<string>("DisplayName")
                         .HasMaxLength(20)
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)");
+
+                    b.Property<bool?>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("LastUpdatedBy")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime?>("LastUpdatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(200)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex(new[] { "CreatedBy" }, "IX_Clients_CreatedBy");
+
+                    b.HasIndex(new[] { "LastUpdatedBy" }, "IX_Clients_LastUpdatedBy");
+
+                    b.ToTable("Clients");
+                });
+
+            modelBuilder.Entity("WebReports.Models.ClientMenu", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClientId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("CreatedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("datetime")
+                        .HasDefaultValueSql("(getdate())");
+
+                    b.Property<DateTime?>("DisabledOn")
+                        .HasColumnType("datetime");
 
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
@@ -260,22 +311,45 @@ namespace WebReports.Migrations
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
-                    b.Property<string>("Name")
+                    b.Property<int?>("MenuOrder")
+                        .HasColumnType("int");
+
+                    b.Property<string>("MenuUrl")
                         .IsRequired()
-                        .HasMaxLength(200)
+                        .HasMaxLength(500)
                         .IsUnicode(false)
-                        .HasColumnType("varchar(200)");
+                        .HasColumnType("varchar(500)");
+
+                    b.Property<string>("ReportId")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(256)");
+
+                    b.Property<string>("ReportName")
+                        .IsRequired()
+                        .HasMaxLength(250)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(250)");
+
+                    b.Property<string>("WorkspaceId")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(256)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ClientId");
 
                     b.HasIndex("CreatedBy");
 
                     b.HasIndex("LastUpdatedBy");
 
-                    b.ToTable("Clients");
+                    b.ToTable("ClientMenus");
                 });
 
-            modelBuilder.Entity("WebReports.Models.ClientMenu", b =>
+            modelBuilder.Entity("WebReports.Models.ClientUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -295,54 +369,11 @@ namespace WebReports.Migrations
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");
 
-                    b.Property<bool?>("IsActive")
+                    b.Property<DateTime?>("DisabledOn")
+                        .HasColumnType("datetime");
+
+                    b.Property<bool?>("IsAcive")
                         .HasColumnType("bit");
-
-                    b.Property<DateTime>("LastUpdateOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
-
-                    b.Property<string>("LastUpdatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<int?>("MenuOrder")
-                        .HasColumnType("int");
-
-                    b.Property<string>("MenuUrl")
-                        .IsRequired()
-                        .HasMaxLength(500)
-                        .IsUnicode(false)
-                        .HasColumnType("varchar(500)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex(new[] { "ClientId" }, "IX_ClientMenus_ClientId");
-
-                    b.HasIndex(new[] { "CreatedBy" }, "IX_ClientMenus_CreatedBy");
-
-                    b.HasIndex(new[] { "LastUpdatedBy" }, "IX_ClientMenus_LastUpdatedBy");
-
-                    b.ToTable("ClientMenus");
-                });
-
-            modelBuilder.Entity("WebReports.Models.ClientUser", b =>
-                {
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ClientId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("CreatedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<DateTime>("CreatedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime")
-                        .HasDefaultValueSql("(getdate())");
 
                     b.Property<string>("LastUpdatedBy")
                         .IsRequired()
@@ -434,13 +465,11 @@ namespace WebReports.Migrations
                     b.HasOne("WebReports.Models.AspNetUser", "CreatedByNavigation")
                         .WithMany("ClientCreatedByNavigations")
                         .HasForeignKey("CreatedBy")
-                        .IsRequired()
                         .HasConstraintName("FK_Clients_AspNetUsers_CB");
 
                     b.HasOne("WebReports.Models.AspNetUser", "LastUpdatedByNavigation")
                         .WithMany("ClientLastUpdatedByNavigations")
                         .HasForeignKey("LastUpdatedBy")
-                        .IsRequired()
                         .HasConstraintName("FK_Clients_AspNetUsers_LUB");
 
                     b.Navigation("CreatedByNavigation");

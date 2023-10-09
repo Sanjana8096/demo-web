@@ -26,7 +26,7 @@ namespace WebReports.Controllers
         public IActionResult PowerBIEmbed()
         {
             IList<PowerBI> pbirpt = new List<PowerBI>();
-            pbirpt.Add(new PowerBI() { WorkspaceId = "f3f59d07-2220-4750-9736-e7e619dd19fc", ReportId= "68432287-1e6e-471b-8077-1d05067960f2" });
+            pbirpt.Add(new PowerBI() { WorkspaceId = "4f1328db-30aa-46a2-8b58-1337f6c7e623", ReportId= "44358590-dfeb-452b-a598-dc5834bc820a" });
          
             ViewData["pbireportparams"] = pbirpt;
 

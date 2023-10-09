@@ -301,7 +301,7 @@ namespace WebReports.Migrations
                     b.Property<bool?>("IsActive")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("LastUpdateOn")
+                    b.Property<DateTime>("LastUpdatedOn")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime")
                         .HasDefaultValueSql("(getdate())");

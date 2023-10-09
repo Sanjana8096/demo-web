@@ -21,7 +21,7 @@ public partial class ClientMenu
 
     public DateTime CreatedOn { get; set; }
 
-    public DateTime LastUpdateOn { get; set; }
+    public DateTime LastUpdatedOn { get; set; }
 
     public string ReportName { get; set; } = null!;
 
